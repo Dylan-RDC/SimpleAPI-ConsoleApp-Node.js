@@ -1,0 +1,125 @@
+const reader = require("./node_modules/readline-sync");
+const Spotify = require("./node_modules/spotify-finder");
+
+const client = new Spotify({
+    consumer: {
+      key: '895bb9dc9b224281a1bdc690f73d4571', // from v2.1.0 is required
+      secret: '8b1ee6884d8d4355a20dc98ab62b7a71' // from v2.1.0 is required
+    
+    }
+})
+
+async function SearchAlbum(name)
+{
+const params = {
+    q: name, // required
+    type: 'album',
+    limit:1
+  }
+try {
+    await client.search(params).then(data => {
+        let album = Object.values(data)[0].items[0];//selecting the first returned album for user search criteria
+    
+        console.log('Type: Album');//formatting and printing relative data to found song 
+        console.log(`Name: ${album.name}`);
+        console.log(`Release Date: ${album.release_date}`);
+        console.log()
+         let artists = [];
+         album.artists.forEach(artist => {
+             artists.push(artist.name)
+         });
+         console.log("Artists:")
+         for (let i = 0; i < artists.length; i++) {
+           console.log(`${i+1}: ${artists[i]}`)
+          }
+    
+    
+    })
+} catch (error) {
+    console.log("Failed to find the album");
+}
+
+}
+
+SearchAlbum(reader.question('Please input album title: ', {
+    //hideEchoBack: true // The typed text on screen is hidden by `*` (default).
+    }));
+###
+const reader = require("./node_modules/readline-sync");
+const {TwitterApi} = require('twitter-api-v2');
+const twitterClient = new TwitterApi("AAAAAAAAAAAAAAAAAAAAAM%2B4cQEAAAAAxv99xzurhLaDsgNyFvIIs2egqyA%3DOzCkHiCTyhWvgMRJUGp7kxuDJY82HuewCwS2DJscicSSxodBjJ");
+const roClient = twitterClient.readOnly; //creates a Read Only client
+
+async function SearchTweets(term)//search recent tweets to find top 1- tweets relative to keyword
+{
+    try {
+      //  const user = await roClient.v2.userByUsername(username);
+      //  let user_id = Object.values(Object.values(user)[0])[0];
+        const foundTweets = await roClient.v2.search(term,{max_results:10});
+        let i = 0;
+        console.log('');
+        console.log(`Top 10 Recent Tweets containing : ${term}`);
+        console.log("---------------------------------------------------------")
+        // Consume fetched tweet from first page of jsTweets
+        for (const tweet of foundTweets) {
+            i++;
+          console.log(`Tweet ${i}: ${tweet.text}`);
+        }
+        console.log("---------------------------------------------------------")
+        
+
+    } catch (error) {
+        console.log(`Error occured: ${error.message}`)
+    } 
+}
+
+SearchTweets(reader.question('Please insert key term for search recent tweets: ', {}));
+###
+const Spotify = require("./node_modules/spotify-finder");
+const reader = require("./node_modules/readline-sync");
+const client = new Spotify({
+    consumer: {
+      key: '895bb9dc9b224281a1bdc690f73d4571', // from v2.1.0 is required
+      secret: '8b1ee6884d8d4355a20dc98ab62b7a71' // from v2.1.0 is required
+    
+    }
+})
+
+async function SpotifySearch(name)
+{
+const params = {
+    q: name, // required
+    type: 'artist',
+    limit:1
+  }
+try {
+    await client.search(params).then(data => {
+        let artist = Object.values(data)[0].items[0];
+        let genres = [];
+        
+        artist.genres.forEach(genre => {
+            genres.push(genre);
+        });
+        
+        let followers = artist.followers.total
+        
+    
+         console.log(`Artist Name: ${artist.name}`);
+         console.log(`Total Followers: ${followers}`)
+         console.log(`Popularity: ${artist.popularity}`)
+         console.log(`Genres:`);
+         console.log("------------")
+        
+          for (let i = 0; i < genres.length; i++) {
+              console.log(`${i+1}: ${genres[i]}`)
+            }
+        console.log("------------")
+        //console.log(track);
+    })
+} catch (error) {
+    console.log(error.message)
+    console.log("Moerse poes call is moes");
+}
+
+}
+SpotifySearch(reader.question('Please input artist title: ', {}));
